@@ -4,15 +4,20 @@ const url = "https://newsapi.org/v2/everything?q=";
 window.addEventListener("load", () => fetchNews("Technology"));
 
 async function fetchNews(query) {
+    const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`;
+
     try {
-       let url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`;
-       let response = await fetch(url);
-         let data = await response.json();
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Fetching news failed: ${response.status}`);
+        }
+        const data = await response.json();
         bindData(data.articles);
     } catch (error) {
-        console.error("Fetching news failed:", error);
+        console.error(error);
     }
 }
+
 function bindData(articles) {
     const cardsContainer = document.getElementById("cardscontainer");
     const newsCardTemplate = document.getElementById("template-news-card");
@@ -25,7 +30,7 @@ function bindData(articles) {
         const cardClone = newsCardTemplate.content.cloneNode(true);
         fillDataInCard(cardClone, article);
         cardsContainer.appendChild(cardClone);
-    })
+    });
 }
 
 function fillDataInCard(cardClone, article) {
@@ -38,13 +43,13 @@ function fillDataInCard(cardClone, article) {
     newsTitle.innerHTML = `${article.title.slice(0, 60)}...`;
     newsDesc.innerHTML = `${article.description.slice(0, 150)}...`;
 
-    const date = new Date(article.publishedAt).toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+    const date = new Date(article.publishedAt).toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
 
     newsSource.innerHTML = `${article.source.name} · ${date}`;
 
     cardClone.firstElementChild.addEventListener("click", () => {
         window.open(article.url, "_blank");
-    })
+    });
 }
 
 let curSelectedNav = null;
@@ -65,4 +70,4 @@ searchButton.addEventListener("click", () => {
     fetchNews(query);
     curSelectedNav?.classList.remove("active");
     curSelectedNav = null;
-})
+});
