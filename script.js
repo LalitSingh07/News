@@ -6,16 +6,15 @@ window.addEventListener("load", () => fetchNews("Technology"));
 async function fetchNews(query) {
     const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`;
 
-    try {
+    
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Fetching news failed: ${response.status}`);
         }
         const data = await response.json();
         bindData(data.articles);
-    } catch (error) {
-        console.error(error);
-    }
+    
+     
 }
 
 function bindData(articles) {
